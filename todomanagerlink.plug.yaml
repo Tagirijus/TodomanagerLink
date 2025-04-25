@@ -1,0 +1,12 @@
+name: todomanagerlink
+functions:
+  showAndGetTasks:
+    path: todomanagerlink.ts:showAndGetTasks
+    command:
+      name: "Show Todomanager Link page and get tasks from online"
+      key: "Ctrl-d"
+  modifyTasks:
+    path: todomanagerlink.ts:modifyTasks
+    command:
+      name: "Modify online tasks with Todomanager Link list"
+      key: "Ctrl-Shift-d"
