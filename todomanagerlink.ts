@@ -53,7 +53,6 @@ async function getWeeklistPOST(calendar: string) {
   const config = await getConfig();
 
   let post = await generateCalendarPOST();
-  console.log(post);
   let response = await fetch(
     post.url + '/weeklist/get', {
       method: 'POST',
@@ -65,18 +64,19 @@ async function getWeeklistPOST(calendar: string) {
   return await response.json();
 }
 
-async function modifyWeeklist(calendar: string, weeklist: string) {
+async function modifyWeeklistPOST(calendar: string, weeklist: string) {
   const config = await getConfig();
 
   let post = await generateCalendarPOST();
-  console.log(post);
   let response = await fetch(
     post.url + '/weeklist/modify', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(post.post_data)
   });
-  if (!response.ok) { throw new Error(`HTTP-Fehler: ${response.status}`) }
+  if (!response.ok) { throw new Error(`HTTP-Error: ${response.status}`) }
+
+  return await response.json();
 }
 
 
