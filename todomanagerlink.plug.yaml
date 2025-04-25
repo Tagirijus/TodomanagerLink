@@ -1,4 +1,6 @@
 name: todomanagerlink
+requiredPermissions:
+  - fetch
 functions:
   showAndGetTasks:
     path: todomanagerlink.ts:showAndGetTasks
