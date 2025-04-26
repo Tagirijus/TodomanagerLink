@@ -1,3 +1,9 @@
+/*
+TODO:
+- being able to use different calendars!
+*/
+
+
 import { editor, system } from '@silverbulletmd/silverbullet/syscalls';
 
 
@@ -24,18 +30,18 @@ async function getConfig() {
   return {...defaultConfig, ...await system.getSpaceConfig('todomanagerLink', defaultConfig)};
 }
 
-async function generateCalendarPOST(calendar: string, this_week: boolean) {
+async function generateCalendarPOST(calendar: string, weeklist: string) {
   const config = await getConfig();
-  if (calendar === undefined) { calendar = 'default' }
-  if (!(calendar in config.nc_calendars)) { return false }
-  if (this_week === undefined) { this_week = true }
+  if (calendar === undefined) { calendar = 'default'; }
+  if (!(calendar in config.nc_calendars)) { return false; }
+  if (weeklist === undefined) { weeklist = ''; }
 
   return {
     url: config.todomanager_url,
     post_data: {
       security: config.security,
-      weeklist: '',
-      'this_week': this_week,
+      'weeklist': weeklist,
+      this_week: true,
       nc_uri: config.nc_calendars[calendar].nc_url,
       nc_calendar: config.nc_calendars[calendar].nc_calendar,
       nc_user: config.nc_calendars[calendar].nc_user,
@@ -50,9 +56,7 @@ async function createTempPage() {
 }
 
 async function getWeeklistPOST(calendar: string) {
-  const config = await getConfig();
-
-  let post = await generateCalendarPOST();
+  let post = await generateCalendarPOST(calendar, '');
   let response = await fetch(
     post.url + '/weeklist/get', {
       method: 'POST',
@@ -65,9 +69,7 @@ async function getWeeklistPOST(calendar: string) {
 }
 
 async function modifyWeeklistPOST(calendar: string, weeklist: string) {
-  const config = await getConfig();
-
-  let post = await generateCalendarPOST();
+  let post = await generateCalendarPOST(calendar, weeklist);
   let response = await fetch(
     post.url + '/weeklist/modify', {
       method: 'POST',
@@ -94,7 +96,7 @@ export async function showAndGetTasks() {
 
   if (page === TODOMANAGER_PAGE) {
     await editor.setText('loading ...');
-    let weeklist_post = await getWeeklistPOST();
+    let weeklist_post = await getWeeklistPOST('default');
     let success = weeklist_post.success;
     let message = weeklist_post.message;
     let data = weeklist_post.data;
@@ -119,7 +121,28 @@ export async function showAndGetTasks() {
 
 export async function modifyTasks() {
   await editor.flashNotification(
-    'TODO: modifyTasks() ...',
-    'error'
+    'Using tasks from this page to modify online tasks ...',
+    'info'
   );
+
+  let weeklist = await editor.getText();
+  let weeklist_post = await modifyWeeklistPOST('default', weeklist);
+  let success = weeklist_post.success;
+  let message = weeklist_post.message;
+  let data = weeklist_post.data;
+  if (success) {
+    await editor.flashNotification(
+      message,
+      'info'
+    );
+    await editor.setText(data);
+  } else {
+    await editor.flashNotification(
+      message,
+      'error'
+    );
+    await editor.setText('⚠️ could not modify weeklist! --> "' + message + '"');
+    console.log('TodomanagerLink: Could not modify weeklist with content. Post response is:');
+    console.log(weeklist_post);
+  }
 }
