@@ -41,7 +41,7 @@ async function generateCalendarPOST(calendar: string, weeklist: string) {
     post_data: {
       security: config.security,
       'weeklist': weeklist,
-      this_week: true,
+      add_weeks: 0,
       nc_uri: config.nc_calendars[calendar].nc_url,
       nc_calendar: config.nc_calendars[calendar].nc_calendar,
       nc_user: config.nc_calendars[calendar].nc_user,
