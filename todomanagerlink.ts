@@ -16,7 +16,7 @@ const defaultConfig = {
       nc_calendar: '',
       nc_user: '',
       nc_password: '',
-      nc_tags: []
+      nc_tag: []
     }
   }
 };
@@ -46,7 +46,7 @@ async function generateCalendarPOST(calendar: string, weeklist: string) {
       nc_calendar: config.nc_calendars[calendar].nc_calendar,
       nc_user: config.nc_calendars[calendar].nc_user,
       nc_password: config.nc_calendars[calendar].nc_password,
-      nc_tags: config.nc_calendars[calendar].nc_tags
+      nc_tag: config.nc_calendars[calendar].nc_tag
     }
   }
 }
